@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class TestSpringBatchReseiverApplication {
+public class TestSpringBatchReceiverApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TestSpringBatchReseiverApplication.class, args);
+		SpringApplication.run(TestSpringBatchReceiverApplication.class, args);
 	}
 
 }
