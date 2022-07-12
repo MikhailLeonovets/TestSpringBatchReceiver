@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class ExceptionControllerAdvice {
 	@ExceptionHandler(DuplicateProductException.class)
 	public ResponseEntity<?> handleDuplicateProductException(DuplicateProductException duplicateProductException) {
-		return ResponseEntity.badRequest().body(duplicateProductException.getMessage());
+		return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(duplicateProductException.getMessage());
 	}
 
 	@ExceptionHandler(DataInputException.class)
