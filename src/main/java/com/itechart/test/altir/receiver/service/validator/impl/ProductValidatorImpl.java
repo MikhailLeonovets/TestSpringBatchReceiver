@@ -16,13 +16,13 @@ public class ProductValidatorImpl implements ProductValidator {
 	private String dataValidatedMsg;
 	@Value("${null.data.input.msg}")
 	private String nullDataInputMsg;
-	@Value("${product.count.must.positive.msg}")
+	@Value("${id.must.positive.msg}")
 	private String idMustBePositive;
 	@Value("${product.name.blank.msg}")
 	private String blankNameMsg;
 	@Value("${product.price.must.positive.msg}")
 	private String priceMustBePositive;
-	@Value("${id.must.positive.msg}")
+	@Value("${product.count.must.positive.msg}")
 	private String countMustBePositive;
 
 	private final Boolean validated = true;
