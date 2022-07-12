@@ -1,0 +1,66 @@
+package com.itechart.test.altir.receiver.controller;
+
+import com.itechart.test.altir.receiver.repository.entity.Product;
+import com.itechart.test.altir.receiver.service.ProductService;
+import com.itechart.test.altir.receiver.service.exception.DataInputException;
+import com.itechart.test.altir.receiver.service.exception.ProductException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import static com.itechart.test.altir.receiver.controller.storage.UrlStorage.DELETE_PRODUCT_BY_ID;
+import static com.itechart.test.altir.receiver.controller.storage.UrlStorage.GET_PRODUCTS_URL;
+import static com.itechart.test.altir.receiver.controller.storage.UrlStorage.GET_PRODUCT_BY_ID;
+import static com.itechart.test.altir.receiver.controller.storage.UrlStorage.POST_PRODUCT_URL;
+import static com.itechart.test.altir.receiver.controller.storage.UrlStorage.PUT_PRODUCT_BY_ID;
+
+@RestController
+@PropertySource("classpath:/message/response.properties")
+public class ProductController {
+	private final ProductService productService;
+
+	@Value("${deleted.successfully.msg}")
+	private String productDeletedMsg;
+
+	@Autowired
+	public ProductController(ProductService productService) {
+		this.productService = productService;
+	}
+
+	@PostMapping(POST_PRODUCT_URL)
+	public ResponseEntity<?> create(@RequestBody Product product) throws DataInputException, ProductException {
+		product = productService.save(product);
+		return ResponseEntity.ok(product);
+	}
+
+	@GetMapping(GET_PRODUCTS_URL)
+	public ResponseEntity<?> findAll() {
+		return ResponseEntity.ok(productService.findAll());
+	}
+
+	@GetMapping(GET_PRODUCT_BY_ID)
+	public ResponseEntity<?> findById(@PathVariable Long id) throws ProductException {
+		return ResponseEntity.ok(productService.findById(id));
+	}
+
+	@PutMapping(PUT_PRODUCT_BY_ID)
+	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Product product)
+			throws DataInputException, ProductException {
+		return ResponseEntity.ok(productService.update(product));
+	}
+
+	@DeleteMapping(DELETE_PRODUCT_BY_ID)
+	public ResponseEntity<?> deleteById(@PathVariable Long id) throws DataInputException, ProductException {
+		productService.deleteById(id);
+		return ResponseEntity.ok(productDeletedMsg);
+	}
+
+}
