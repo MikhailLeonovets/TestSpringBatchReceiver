@@ -7,6 +7,7 @@ import com.itechart.test.altir.receiver.service.exception.ProductException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,7 @@ public class ProductController {
 	private final ProductService productService;
 
 	@Value("${deleted.successfully.msg}")
-	private String productDeletedMsg;
+	private String deletedMsg;
 
 	@Autowired
 	public ProductController(ProductService productService) {
@@ -38,7 +39,7 @@ public class ProductController {
 	@PostMapping(POST_PRODUCT_URL)
 	public ResponseEntity<?> create(@RequestBody Product product) throws DataInputException, ProductException {
 		product = productService.save(product);
-		return ResponseEntity.ok(product);
+		return ResponseEntity.status(HttpStatus.CREATED).body(product);
 	}
 
 	@GetMapping(GET_PRODUCTS_URL)
@@ -60,7 +61,6 @@ public class ProductController {
 	@DeleteMapping(DELETE_PRODUCT_BY_ID)
 	public ResponseEntity<?> deleteById(@PathVariable Long id) throws DataInputException, ProductException {
 		productService.deleteById(id);
-		return ResponseEntity.ok(productDeletedMsg);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedMsg);
 	}
-
 }
