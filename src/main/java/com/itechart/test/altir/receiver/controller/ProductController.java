@@ -3,7 +3,8 @@ package com.itechart.test.altir.receiver.controller;
 import com.itechart.test.altir.receiver.repository.entity.Product;
 import com.itechart.test.altir.receiver.service.ProductService;
 import com.itechart.test.altir.receiver.service.exception.DataInputException;
-import com.itechart.test.altir.receiver.service.exception.ProductException;
+import com.itechart.test.altir.receiver.service.exception.DuplicateProductException;
+import com.itechart.test.altir.receiver.service.exception.ProductNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -37,7 +38,7 @@ public class ProductController {
 	}
 
 	@PostMapping(POST_PRODUCT_URL)
-	public ResponseEntity<?> create(@RequestBody Product product) throws DataInputException, ProductException {
+	public ResponseEntity<?> create(@RequestBody Product product) throws DataInputException, DuplicateProductException {
 		product = productService.save(product);
 		return ResponseEntity.status(HttpStatus.CREATED).body(product);
 	}
@@ -48,18 +49,18 @@ public class ProductController {
 	}
 
 	@GetMapping(GET_PRODUCT_BY_ID)
-	public ResponseEntity<?> findById(@PathVariable Long id) throws ProductException {
+	public ResponseEntity<?> findById(@PathVariable Long id) throws ProductNotFoundException {
 		return ResponseEntity.ok(productService.findById(id));
 	}
 
 	@PutMapping(PUT_PRODUCT_BY_ID)
 	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Product product)
-			throws DataInputException, ProductException {
+			throws DataInputException, ProductNotFoundException {
 		return ResponseEntity.ok(productService.update(product));
 	}
 
 	@DeleteMapping(DELETE_PRODUCT_BY_ID)
-	public ResponseEntity<?> deleteById(@PathVariable Long id) throws DataInputException, ProductException {
+	public ResponseEntity<?> deleteById(@PathVariable Long id) throws DataInputException, ProductNotFoundException {
 		productService.deleteById(id);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(deletedMsg);
 	}
