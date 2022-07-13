@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import static com.itechart.test.altir.receiver.controller.storage.UrlStorage.DELETE_PRODUCT_BY_ID;
 import static com.itechart.test.altir.receiver.controller.storage.UrlStorage.GET_PRODUCTS_URL;
 import static com.itechart.test.altir.receiver.controller.storage.UrlStorage.GET_PRODUCT_BY_ID;
+import static com.itechart.test.altir.receiver.controller.storage.UrlStorage.GET_PRODUCT_BY_NAME;
 import static com.itechart.test.altir.receiver.controller.storage.UrlStorage.POST_PRODUCT_URL;
 import static com.itechart.test.altir.receiver.controller.storage.UrlStorage.PUT_PRODUCT_BY_ID;
 
@@ -51,6 +52,11 @@ public class ProductController {
 	@GetMapping(GET_PRODUCT_BY_ID)
 	public ResponseEntity<?> findById(@PathVariable Long id) throws ProductNotFoundException {
 		return ResponseEntity.ok(productService.findById(id));
+	}
+
+	@GetMapping(GET_PRODUCT_BY_NAME)
+	public ResponseEntity<?> findById(@PathVariable String name) throws ProductNotFoundException {
+		return ResponseEntity.ok(productService.findByName(name));
 	}
 
 	@PutMapping(PUT_PRODUCT_BY_ID)

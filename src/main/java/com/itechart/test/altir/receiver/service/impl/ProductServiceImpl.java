@@ -25,6 +25,8 @@ public class ProductServiceImpl implements ProductService {
 	private String productIdNotFoundMsg;
 	@Value("${product.name.already.exists.msg}")
 	private String productNameAlreadyExistsMsg;
+	@Value("${name.product.not.found.msg}")
+	private String productNameNotFound;
 
 	@Autowired
 	public ProductServiceImpl(ProductRepository productRepository, ProductValidator productValidator) {
@@ -53,6 +55,12 @@ public class ProductServiceImpl implements ProductService {
 	public Product findById(Long id) throws ProductNotFoundException {
 		return productRepository.findById(id)
 				.orElseThrow(() -> new ProductNotFoundException(String.format(productIdNotFoundMsg, id)));
+	}
+
+	@Override
+	public Product findByName(String name) throws ProductNotFoundException {
+		return productRepository.findByName(name)
+				.orElseThrow(() -> new ProductNotFoundException(String.format(productNameNotFound, name)));
 	}
 
 	@Override

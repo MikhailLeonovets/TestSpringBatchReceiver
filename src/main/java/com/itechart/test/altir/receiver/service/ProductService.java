@@ -14,6 +14,8 @@ public interface ProductService {
 
 	Product findById(Long id) throws ProductNotFoundException;
 
+	Product findByName(String name) throws ProductNotFoundException;
+
 	Product update(Product product) throws DataInputException, ProductNotFoundException;
 
 	void deleteById(Long id) throws DataInputException, ProductNotFoundException;
