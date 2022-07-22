@@ -4,19 +4,15 @@ import com.itechart.test.altir.receiver.controller.model.JdbcOperationDto;
 import com.itechart.test.altir.receiver.controller.model.JdbcOperationResultDto;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-@RestController
 public class RemoteJdbcOperationController {
 	private static final String URL = "/jdbc-operation";
 

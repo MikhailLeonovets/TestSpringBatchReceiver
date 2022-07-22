@@ -3,7 +3,7 @@ package com.itechart.test.altir.receiver.controller.model;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.springframework.batch.core.StepExecution;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -11,7 +11,7 @@ import java.util.Collection;
 @Getter
 @Setter
 @AllArgsConstructor
-public class JdbcOperationDto implements Serializable {
-	private String methodName;
-	private Collection<ImmutablePair<Class<?>, Object>> arguments;
+public class SqlStepExecsDto implements Serializable {
+	private String sql;
+	private Collection<StepExecution> stepExecutions;
 }

@@ -9,7 +9,8 @@ import java.io.Serializable;
 @Getter
 @Setter
 @AllArgsConstructor
-public class JdbcOperationResultDto implements Serializable {
-	private Class<?> classType;
-	private Object value;
+public class SqlAndObjsMethodDto implements Serializable {
+	private String sql;
+	private Object[] args;
+	private String method;
 }
