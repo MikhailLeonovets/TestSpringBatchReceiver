@@ -1,10 +1,12 @@
 package com.itechart.test.altir.receiver.controller;
 
+import com.google.gson.Gson;
 import com.itechart.test.altir.receiver.controller.model.SqlAndObjsDto;
 import com.itechart.test.altir.receiver.controller.model.SqlAndObjsStartCountDto;
 import com.itechart.test.altir.receiver.controller.model.SqlObjArgsAndTypesDto;
 import com.itechart.test.altir.receiver.controller.model.SqlReqTypeArgsDto;
 import com.itechart.test.altir.receiver.service.mapper.JobInstanceRowMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.context.ApplicationContext;
 import org.springframework.dao.DataAccessException;
@@ -12,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,16 +25,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@Slf4j
 public class JobInstanceDaoController {
 	private static final String URL = "/job-inst-jdbc-operation";
 
 	private final JdbcOperations jdbcOperations;
 	private final ApplicationContext applicationContext;
+	private final Gson gson;
 
 	public JobInstanceDaoController(JdbcOperations jdbcOperations,
-	                                ApplicationContext applicationContext) {
+	                                ApplicationContext applicationContext,
+	                                Gson gson) {
 		this.jdbcOperations = jdbcOperations;
 		this.applicationContext = applicationContext;
+		this.gson = gson;
 	}
 
 	@PutMapping(URL + "/update")
@@ -45,9 +50,10 @@ public class JobInstanceDaoController {
 
 	@PostMapping(URL + "/query/list")
 	public ResponseEntity<?> query(@RequestBody SqlAndObjsDto dto) {
-		return ResponseEntity.ok(jdbcOperations.query(dto.getSql(),
+		List<JobInstance> jobInstances = jdbcOperations.query(dto.getSql(),
 				applicationContext.getBean(JobInstanceRowMapper.class),
-				dto.getArgs()));
+				dto.getArgs());
+		return ResponseEntity.ok(gson.toJson(jobInstances));
 	}
 
 	@PostMapping(URL + "/query/string")
@@ -62,18 +68,17 @@ public class JobInstanceDaoController {
 
 	@PostMapping(URL + "/query/object")
 	public ResponseEntity<?> queryForObject(@RequestBody SqlAndObjsDto sqlAndObjsDto) {
-		return ResponseEntity.ok(jdbcOperations.queryForObject(
+		return ResponseEntity.ok(gson.toJson(jdbcOperations.queryForObject(
 				sqlAndObjsDto.getSql(),
 				applicationContext.getBean(JobInstanceRowMapper.class),
-				sqlAndObjsDto.getArgs()));
+				sqlAndObjsDto.getArgs())));
 	}
 
 	@PostMapping(URL + "/query/rse")
 	public ResponseEntity<?> query(@RequestBody SqlAndObjsStartCountDto sqlAndObjsStartCountDto) {
 		int start = sqlAndObjsStartCountDto.getStart();
 		int count = sqlAndObjsStartCountDto.getCount();
-		return ResponseEntity.ok(
-				jdbcOperations.query(
+		String json = gson.toJson(jdbcOperations.query(
 						sqlAndObjsStartCountDto.getSql(),
 						sqlAndObjsStartCountDto.getArgs(),
 						new ResultSetExtractor<List<JobInstance>>() {
@@ -96,24 +101,24 @@ public class JobInstanceDaoController {
 						}
 				)
 		);
+		return ResponseEntity.ok(json);
 	}
 
 	@PostMapping(URL + "/object/query")
 	public ResponseEntity<?> queryForObjectQuery(@RequestBody SqlAndObjsDto sqlAndObjsDto) {
-		return ResponseEntity.ok(jdbcOperations.queryForObject(
+		return ResponseEntity.ok(gson.toJson(jdbcOperations.queryForObject(
 				sqlAndObjsDto.getSql(),
 				sqlAndObjsDto.getArgs(),
 				applicationContext.getBean(JobInstanceRowMapper.class)
-		));
+		)));
 	}
 
 	@PostMapping(URL + "/query/object/req-type")
 	public ResponseEntity<?> queryForObjectReqType(@RequestBody SqlReqTypeArgsDto sqlReqTypeArgsDto) {
-		return ResponseEntity.ok(jdbcOperations.queryForObject(
+		return ResponseEntity.ok(gson.toJson(jdbcOperations.queryForObject(
 				sqlReqTypeArgsDto.getSql(),
 				sqlReqTypeArgsDto.getReqType(),
 				sqlReqTypeArgsDto.getArgs()
-		));
+		)));
 	}
-
 }

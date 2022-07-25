@@ -1,5 +1,6 @@
 package com.itechart.test.altir.receiver.controller;
 
+import com.google.gson.Gson;
 import com.itechart.test.altir.receiver.controller.model.SqlAndObjsMethodDto;
 import com.itechart.test.altir.receiver.controller.model.SqlArgsReqTypesDto;
 import com.itechart.test.altir.receiver.controller.model.SqlObjArgsAndTypesDto;
@@ -11,7 +12,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,11 +23,14 @@ public class StepExecutionDaoController {
 
 	private final JdbcOperations jdbcOperations;
 	private final ApplicationContext applicationContext;
+	private final Gson gson;
 
 	public StepExecutionDaoController(JdbcOperations jdbcOperations,
-	                                  ApplicationContext applicationContext) {
+	                                  ApplicationContext applicationContext,
+	                                  Gson gson) {
 		this.jdbcOperations = jdbcOperations;
 		this.applicationContext = applicationContext;
+		this.gson = gson;
 	}
 
 	@PutMapping(URL + "/update")
@@ -47,25 +50,24 @@ public class StepExecutionDaoController {
 
 	@PostMapping(URL + "/query/object")
 	public ResponseEntity<?> queryForObject(@RequestBody SqlArgsReqTypesDto sqlArgsReqTypesDto) {
-		return ResponseEntity.ok(jdbcOperations.queryForObject(
-						sqlArgsReqTypesDto.getSql(),
-						sqlArgsReqTypesDto.getArgs(),
-						sqlArgsReqTypesDto.getReqType()
-				)
-		);
+		return ResponseEntity.ok(gson.toJson(jdbcOperations.queryForObject(
+				sqlArgsReqTypesDto.getSql(),
+				sqlArgsReqTypesDto.getArgs(),
+				sqlArgsReqTypesDto.getReqType()
+		)));
 	}
 
 	@PostMapping(URL + "/query")
 	public ResponseEntity<?> query(@RequestBody SqlAndObjsMethodDto sqlAndObjsMethodDto) {
-		return ResponseEntity.ok(jdbcOperations.query(
+		return ResponseEntity.ok(gson.toJson(jdbcOperations.query(
 				sqlAndObjsMethodDto.getSql(),
 				getRowMapperByMethod(sqlAndObjsMethodDto.getMethod()),
 				sqlAndObjsMethodDto.getArgs()
-		));
+		)));
 	}
 
 	private RowMapper getRowMapperByMethod(String method) {
-		if (method.equals("getLastStepExecution")) {
+		if ("getLastStepExecution".equals(method)) {
 			return applicationContext.getBean(StepExecutionRowMapperSpecial.class);
 		}
 		return applicationContext.getBean(StepExecutionRowMapper.class);

@@ -1,5 +1,6 @@
 package com.itechart.test.altir.receiver.controller;
 
+import com.google.gson.Gson;
 import com.itechart.test.altir.receiver.controller.model.SqlAndBatchPssDto;
 import com.itechart.test.altir.receiver.controller.model.SqlAndIdDto;
 import com.itechart.test.altir.receiver.controller.model.SqlAndPrepStSetterDto;
@@ -9,7 +10,6 @@ import com.itechart.test.altir.receiver.service.mapper.PreparedStatementSetterEx
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,11 +21,14 @@ public class ExecutionContextDaoController {
 
 	private final JdbcTemplate jdbcTemplate;
 	private final ApplicationContext applicationContext;
+	private final Gson gson;
 
 	public ExecutionContextDaoController(JdbcTemplate jdbcTemplate,
-	                                     ApplicationContext applicationContext) {
+	                                     ApplicationContext applicationContext,
+	                                     Gson gson) {
 		this.jdbcTemplate = jdbcTemplate;
 		this.applicationContext = applicationContext;
+		this.gson = gson;
 	}
 
 	@PutMapping(URL + "/update/pss")
@@ -37,9 +40,9 @@ public class ExecutionContextDaoController {
 
 	@PostMapping(URL + "/query")
 	public ResponseEntity<?> query(@RequestBody SqlAndIdDto sqlAndIdDto) {
-		return ResponseEntity.ok(jdbcTemplate.query(sqlAndIdDto.getSql(),
+		return ResponseEntity.ok(gson.toJson(jdbcTemplate.query(sqlAndIdDto.getSql(),
 				applicationContext.getBean(ExecutionContextRowMapper.class),
-				sqlAndIdDto.getId()));
+				sqlAndIdDto.getId())));
 	}
 
 	@PutMapping(URL + "/batch-upd/bpss")
