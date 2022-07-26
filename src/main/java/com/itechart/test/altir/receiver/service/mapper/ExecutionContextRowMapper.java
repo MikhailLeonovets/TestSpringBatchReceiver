@@ -1,7 +1,10 @@
 package com.itechart.test.altir.receiver.service.mapper;
 
 import org.springframework.batch.core.repository.ExecutionContextSerializer;
+import org.springframework.batch.core.repository.dao.DefaultExecutionContextSerializer;
+import org.springframework.batch.core.repository.dao.Jackson2ExecutionContextStringSerializer;
 import org.springframework.batch.item.ExecutionContext;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -17,8 +20,8 @@ import java.util.Map;
 public class ExecutionContextRowMapper implements RowMapper<ExecutionContext> {
 	private final ExecutionContextSerializer executionContextSerializer;
 
-	public ExecutionContextRowMapper(ExecutionContextSerializer executionContextSerializer) {
-		this.executionContextSerializer = executionContextSerializer;
+	public ExecutionContextRowMapper() {
+		this.executionContextSerializer = new Jackson2ExecutionContextStringSerializer();
 	}
 
 	@Override
@@ -32,8 +35,7 @@ public class ExecutionContextRowMapper implements RowMapper<ExecutionContext> {
 		try {
 			ByteArrayInputStream in = new ByteArrayInputStream(serializedContext.getBytes("ISO-8859-1"));
 			map = executionContextSerializer.deserialize(in);
-		}
-		catch (IOException ioe) {
+		} catch (IOException ioe) {
 			throw new IllegalArgumentException("Unable to deserialize the execution context", ioe);
 		}
 		for (Map.Entry<String, Object> entry : map.entrySet()) {

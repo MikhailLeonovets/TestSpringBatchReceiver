@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@Slf4j
 public class JobInstanceDaoController {
 	private static final String URL = "/job-inst-jdbc-operation";
 

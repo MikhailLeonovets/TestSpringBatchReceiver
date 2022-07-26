@@ -14,7 +14,11 @@ import java.sql.SQLException;
 @Component
 @Scope("prototype")
 public class StepExecutionRowMapper implements RowMapper<StepExecution> {
-	private final JobExecution jobExecution;
+	private JobExecution jobExecution;
+
+	public StepExecutionRowMapper() {
+
+	}
 
 	public StepExecutionRowMapper(JobExecution jobExecution) {
 		this.jobExecution = jobExecution;
