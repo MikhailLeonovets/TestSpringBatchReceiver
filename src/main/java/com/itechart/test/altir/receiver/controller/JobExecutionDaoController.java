@@ -63,7 +63,9 @@ public class JobExecutionDaoController {
 	}
 
 	@PutMapping(URL + "/update")
-	public ResponseEntity<?> update(@RequestBody SqlObjArgsAndTypesDto sqlObjArgsAndTypesDto) {
+	public ResponseEntity<?> update(@RequestBody String sqlObjArgsAndTypesDtoJson) {
+		SqlObjArgsAndTypesDto sqlObjArgsAndTypesDto = gson.fromJson(sqlObjArgsAndTypesDtoJson, SqlObjArgsAndTypesDto.class);
+		log.info(sqlObjArgsAndTypesDto.toString());
 		return ResponseEntity.ok(jdbcTemplate.update(
 				sqlObjArgsAndTypesDto.getSql(),
 				sqlObjArgsAndTypesDto.getObjects(),
