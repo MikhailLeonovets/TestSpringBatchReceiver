@@ -7,7 +7,7 @@ import com.itechart.test.altir.receiver.controller.model.SqlObjArgsAndTypesDto;
 import com.itechart.test.altir.receiver.controller.model.SqlObjsJobInsJsonDto;
 import com.itechart.test.altir.receiver.controller.model.SqlReqTypeArgsDto;
 import com.itechart.test.altir.receiver.service.mapper.JobExecutionRowMapper;
-import com.itechart.test.altir.receiver.service.mapper.RowCallbackHandlerJobExec;
+import com.itechart.test.altir.receiver.service.handler.RowCallbackHandlerJobExec;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.JobInstance;
@@ -42,22 +42,15 @@ public class JobExecutionDaoController {
 	@SneakyThrows
 	@PostMapping(URL + "/query")
 	public ResponseEntity<?> query(@RequestBody SqlObjsJobInsJsonDto sqlObjsJobInsJsonDto) {
-		String str;
-		if (sqlObjsJobInsJsonDto.getJobInstanceJson() == null) {
-			str = gson.toJson(jdbcTemplate.query(
-					sqlObjsJobInsJsonDto.getSql(),
-					applicationContext.getBean(JobExecutionRowMapper.class),
-					sqlObjsJobInsJsonDto.getArgs()
-			));
-		} else {
-			JobExecutionRowMapper rowMapper = applicationContext.getBean(JobExecutionRowMapper.class);
-			rowMapper.setJobInstance(objectMapper.readValue(sqlObjsJobInsJsonDto.getJobInstanceJson(),
-					JobInstance.class));
-			str = gson.toJson(jdbcTemplate.query(
-					sqlObjsJobInsJsonDto.getSql(),
-					rowMapper,
-					sqlObjsJobInsJsonDto.getArgs()));
-		}
+		JobExecutionRowMapper rowMapper = applicationContext.getBean(JobExecutionRowMapper.class);
+		JobInstance jobInstance = objectMapper.readValue(sqlObjsJobInsJsonDto.getJobInstanceJson(),
+				JobInstance.class);
+		log.info(jobInstance.toString());
+		rowMapper.setJobInstance(jobInstance);
+		String str = gson.toJson(jdbcTemplate.query(
+				sqlObjsJobInsJsonDto.getSql(),
+				rowMapper,
+				sqlObjsJobInsJsonDto.getArgs()));
 		log.info(str);
 		return ResponseEntity.ok(str);
 	}
@@ -65,7 +58,6 @@ public class JobExecutionDaoController {
 	@PutMapping(URL + "/update")
 	public ResponseEntity<?> update(@RequestBody String sqlObjArgsAndTypesDtoJson) {
 		SqlObjArgsAndTypesDto sqlObjArgsAndTypesDto = gson.fromJson(sqlObjArgsAndTypesDtoJson, SqlObjArgsAndTypesDto.class);
-		log.info(sqlObjArgsAndTypesDto.toString());
 		return ResponseEntity.ok(jdbcTemplate.update(
 				sqlObjArgsAndTypesDto.getSql(),
 				sqlObjArgsAndTypesDto.getObjects(),
@@ -75,16 +67,18 @@ public class JobExecutionDaoController {
 
 	@PostMapping(URL + "/query/object")
 	public ResponseEntity<?> queryForObject(@RequestBody SqlReqTypeArgsDto sqlReqTypeArgsDto) {
-		return ResponseEntity.ok(gson.toJson(jdbcTemplate.queryForObject(
+		log.info(sqlReqTypeArgsDto.toString());
+		String gsonResponse = gson.toJson(jdbcTemplate.queryForObject(
 				sqlReqTypeArgsDto.getSql(),
 				sqlReqTypeArgsDto.getReqType(),
 				sqlReqTypeArgsDto.getArgs()
-		)));
+		));
+		log.info(gsonResponse);
+		return ResponseEntity.ok(gsonResponse);
 	}
 
 	@PostMapping(URL + "/object/query")
 	public ResponseEntity<?> queryForObject(@RequestBody SqlAndObjsDto sqlAndObjsDto) {
-
 		return ResponseEntity.ok(gson.toJson(jdbcTemplate.queryForObject(
 				sqlAndObjsDto.getSql(),
 				applicationContext.getBean(JobExecutionRowMapper.class),

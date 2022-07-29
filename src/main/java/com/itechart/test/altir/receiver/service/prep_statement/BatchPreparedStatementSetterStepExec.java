@@ -1,4 +1,4 @@
-package com.itechart.test.altir.receiver.service.mapper;
+package com.itechart.test.altir.receiver.service.prep_statement;
 
 import org.springframework.batch.core.StepExecution;
 import org.springframework.context.annotation.Scope;

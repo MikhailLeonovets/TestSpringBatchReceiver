@@ -1,5 +1,6 @@
-package com.itechart.test.altir.receiver.service.mapper;
+package com.itechart.test.altir.receiver.service.handler;
 
+import com.itechart.test.altir.receiver.service.mapper.JobExecutionRowMapper;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.context.annotation.Scope;
 import org.springframework.jdbc.core.RowCallbackHandler;

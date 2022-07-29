@@ -37,8 +37,6 @@ public class JobExecutionRowMapper implements RowMapper<JobExecution> {
 		this.jobInstance = jobInstance;
 	}
 
-
-
 	@Override
 	public JobExecution mapRow(ResultSet rs, int rowNum) throws SQLException {
 		Long id = rs.getLong(1);

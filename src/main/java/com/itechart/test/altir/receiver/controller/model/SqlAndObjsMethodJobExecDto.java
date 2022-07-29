@@ -5,16 +5,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.io.Serializable;
+import org.springframework.batch.core.JobExecution;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class SqlReqTypeArgsDto implements Serializable {
+public class SqlAndObjsMethodJobExecDto {
 	private String sql;
-	private Class<?> reqType;
 	private Object[] args;
+	private String method;
+	private JobExecution jobExecution;
 }

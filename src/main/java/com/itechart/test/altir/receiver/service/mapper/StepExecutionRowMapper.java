@@ -17,7 +17,6 @@ public class StepExecutionRowMapper implements RowMapper<StepExecution> {
 	private JobExecution jobExecution;
 
 	public StepExecutionRowMapper() {
-
 	}
 
 	public StepExecutionRowMapper(JobExecution jobExecution) {

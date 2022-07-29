@@ -1,13 +1,16 @@
 package com.itechart.test.altir.receiver.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import com.itechart.test.altir.receiver.controller.model.SqlAndObjsMethodDto;
+import com.itechart.test.altir.receiver.controller.model.SqlAndObjsMethodJobExecDto;
 import com.itechart.test.altir.receiver.controller.model.SqlArgsReqTypesDto;
 import com.itechart.test.altir.receiver.controller.model.SqlObjArgsAndTypesDto;
 import com.itechart.test.altir.receiver.controller.model.SqlStepExecsDto;
-import com.itechart.test.altir.receiver.service.mapper.BatchPreparedStatementSetterStepExec;
+import com.itechart.test.altir.receiver.service.prep_statement.BatchPreparedStatementSetterStepExec;
 import com.itechart.test.altir.receiver.service.mapper.StepExecutionRowMapper;
 import com.itechart.test.altir.receiver.service.mapper.StepExecutionRowMapperSpecial;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcOperations;
@@ -24,13 +27,16 @@ public class StepExecutionDaoController {
 	private final JdbcOperations jdbcOperations;
 	private final ApplicationContext applicationContext;
 	private final Gson gson;
+	private final ObjectMapper objectMapper;
 
 	public StepExecutionDaoController(JdbcOperations jdbcOperations,
 	                                  ApplicationContext applicationContext,
-	                                  Gson gson) {
+	                                  Gson gson,
+	                                  ObjectMapper objectMapper) {
 		this.jdbcOperations = jdbcOperations;
 		this.applicationContext = applicationContext;
 		this.gson = gson;
+		this.objectMapper = objectMapper;
 	}
 
 	@PutMapping(URL + "/update")
@@ -57,19 +63,23 @@ public class StepExecutionDaoController {
 		)));
 	}
 
+	@SneakyThrows
 	@PostMapping(URL + "/query")
-	public ResponseEntity<?> query(@RequestBody SqlAndObjsMethodDto sqlAndObjsMethodDto) {
-		return ResponseEntity.ok(gson.toJson(jdbcOperations.query(
-				sqlAndObjsMethodDto.getSql(),
-				getRowMapperByMethod(sqlAndObjsMethodDto.getMethod()),
-				sqlAndObjsMethodDto.getArgs()
-		)));
+	public ResponseEntity<?> query(@RequestBody String string) {
+		SqlAndObjsMethodJobExecDto sqlAndObjsMethodJobExecDto = objectMapper.readValue(string,
+				SqlAndObjsMethodJobExecDto.class);
+		String gsonResponse = gson.toJson(jdbcOperations.query(
+				sqlAndObjsMethodJobExecDto.getSql(),
+				getRowMapperByMethod(sqlAndObjsMethodJobExecDto),
+				sqlAndObjsMethodJobExecDto.getArgs()
+		));
+		return ResponseEntity.ok(gsonResponse);
 	}
 
-	private RowMapper getRowMapperByMethod(String method) {
-		if ("getLastStepExecution".equals(method)) {
+	private RowMapper getRowMapperByMethod(SqlAndObjsMethodJobExecDto sqlAndObjsMethodJobExecDto) {
+		if ("getLastStepExecution".equals(sqlAndObjsMethodJobExecDto.getMethod())) {
 			return applicationContext.getBean(StepExecutionRowMapperSpecial.class);
 		}
-		return applicationContext.getBean(StepExecutionRowMapper.class);
+		return new StepExecutionRowMapper(sqlAndObjsMethodJobExecDto.getJobExecution());
 	}
 }

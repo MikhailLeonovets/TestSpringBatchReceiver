@@ -4,11 +4,15 @@ package com.itechart.test.altir.receiver.service.mapper;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
+import org.springframework.context.annotation.Scope;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Component
+@Scope("prototype")
 public class StepExecutionRowMapperSpecial implements RowMapper {
 	@Override
 	public Object mapRow(ResultSet rs, int rowNum) throws SQLException {

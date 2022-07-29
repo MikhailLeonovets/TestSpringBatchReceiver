@@ -1,4 +1,4 @@
-package com.itechart.test.altir.receiver.service.mapper;
+package com.itechart.test.altir.receiver.service.prep_statement;
 
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.support.lob.DefaultLobHandler;
